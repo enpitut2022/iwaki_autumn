@@ -1,17 +1,18 @@
 from django.shortcuts import render
-from django.core.mail import BadHeaderError, send_mail
 from django.http import HttpResponse
+import json
+from django.views.decorators.csrf import csrf_exempt
 
+from utils import message_creater
+from line_bot.line_message import LineMessage
+
+@csrf_exempt
 def index(request):
-    # subject = "題名"
-    # message = "本文です\nこんにちは。メールを送信しました"
-    # from_email = "information@yarukikkake"
-    # recipient_list = [
-    #     "amixedcolor@gmail.com",
-    #     "iwanatteiwanai123@gmail.com",
-    #     "morinotsukuba@gmail.com",
-    #     "okegom@outlook.com"
-    # ]
-
-    # send_mail(subject, message, from_email, recipient_list)
-    return HttpResponse("やるきっかけにこんにちは！")
+    if request.method == 'POST':
+        request = json.loads(request.body.decode('utf-8'))
+        data = request['events'][0]
+        message = data['message']
+        reply_token = data['replyToken']
+        line_message = LineMessage(message_creater.create_single_text_message(message['text']))
+        line_message.reply(reply_token)
+        return HttpResponse("ok")
