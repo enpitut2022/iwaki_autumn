@@ -4,7 +4,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 
 from utils import message_creater
-from line_bot.line_message import LineMessage
+from yarukikkake.line_message import LineMessage
 
 @csrf_exempt
 def index(request):

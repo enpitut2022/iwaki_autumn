@@ -1,6 +1,6 @@
 def create_single_text_message(message):
     if message == '予定':
-        message = 'やるきかっけの予定が生成されました！11/17 18時よりこちらのURLから参加できます！\n https://github.com/enpitut2022/iwaki_autumn'
+        message = 'やるきかっけの予定が生成されました！\n 題名：レスポンもくもく会\n 11/16 15時よりこちらのURLから参加できます！\n https://discord.com/channels/963633143317938176/987247856991744020'
     test_message = [
                 {
                     'type': 'text',
