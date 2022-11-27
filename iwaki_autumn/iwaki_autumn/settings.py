@@ -140,7 +140,3 @@ EMAIL_PORT = 25
 EMAIL_HOST_USER = 'apptest'
 EMAIL_HOST_PASSWORD = 'xxxxxxxx'
 EMAIL_USE_TLS = False
-
-SUPERUSER_NAME = 'host_iwaki'
-SUPERUSER_EMAIL = 'host.iwaki@yarukikkake.com'
-SUPERUSER_PASSWORD = 'yarukikkake_admin'
