@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
+from dj_database_url import parse as dburl
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +28,7 @@ SECRET_KEY = 'django-insecure-nr-3ye+%l=ww#92v%%0do*mcu0i+t!#l%mrf70*^acg^rwm&rj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [".ngrok.io", "127.0.0.1",]
+ALLOWED_HOSTS = [".ngrok.io", "127.0.0.1",".render.com"]
 
 
 # Application definition
@@ -42,6 +45,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -74,11 +78,10 @@ WSGI_APPLICATION = 'iwaki_autumn.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+default_dburl = 'sqlite:///' + str(BASE_DIR / 'db.sqlite3')
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': config('DATABASE_URL', default=default_dburl, cast=dburl), 
 }
 
 
@@ -120,6 +123,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# デプロイ先で静的ファイルを配信するための設定
+STATIC_ROOT = str(BASE_DIR / 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -133,3 +140,7 @@ EMAIL_PORT = 25
 EMAIL_HOST_USER = 'apptest'
 EMAIL_HOST_PASSWORD = 'xxxxxxxx'
 EMAIL_USE_TLS = False
+
+SUPERUSER_NAME = 'host_iwaki'
+SUPERUSER_EMAIL = 'host.iwaki@yarukikkake.com'
+SUPERUSER_PASSWORD = 'yarukikkake_admin'
