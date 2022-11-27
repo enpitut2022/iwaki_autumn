@@ -3,7 +3,7 @@
 set -o errexit
 
 pip install -r requirements.txt
-cd iwaki_autumun
+cd ./iwaki_autumun
 python manage.py collectstatic --no-input
 python manage.py makemigrations
 python manage.py migrate
