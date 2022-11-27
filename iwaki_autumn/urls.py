@@ -18,7 +18,6 @@ from django.http import HttpResponse
 from django.urls import path, include
 
 urlpatterns = [
-    path('', HttpResponse("やるきっかけはLINE BOTにて提供されています。")),
     path('admin/', admin.site.urls),
-    path('yarukikkake/',include('yarukikkake.urls'))
+    path('',include('yarukikkake.urls'))
 ]
