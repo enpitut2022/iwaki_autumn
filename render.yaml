@@ -1,6 +1,6 @@
 databases:
-  - name: yarukikkake_test_db
-    databaseName: yarukikkake_test_db
+  - name: yarukikkake_db
+    databaseName: yarukikkake_db
     user: yarukikkake
     region: singapore
     plan: free
