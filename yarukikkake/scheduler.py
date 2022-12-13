@@ -36,20 +36,21 @@ def _20221213_2250():
     line_bot_api.broadcast(TextSendMessage("This is a test2"))
 
 def start():
-    scheduler = BackgroundScheduler()
-    django_job_store = DjangoJobStore()
-    scheduler.add_jobstore(django_job_store, "default")
-    print("---")
-    try :
-        django_job_store.remove_all_jobs()
-    except :
-        pass
-    print("---")
-    scheduler.add_job(_20221209_1800, 'cron', year=2022, month=12, day=9, hour=18, minute=00, id="test1")
-    scheduler.add_job(_20221212_0830, 'cron', year=2022, month=12, day=12, hour=8, minute=30, id="test2")
-    scheduler.add_job(_20221212_1800, 'cron', year=2022, month=12, day=12, hour=18, minute=00, id="test3")
-    scheduler.add_job(_20221213_0830, 'cron', year=2022, month=12, day=13, hour=8, minute=30, id="test4")
-    scheduler.add_job(_20221213_1800, 'cron', year=2022, month=12, day=13, hour=18, minute=00, id="test5")
-    scheduler.add_job(_20221213_2230, 'cron', year=2022, month=12, day=13, hour=22, minute=30, id="test6")
-    scheduler.add_job(_20221213_2250, 'cron', year=2022, month=12, day=13, hour=22, minute=50, id="test7")
-    scheduler.start()
+    # scheduler = BackgroundScheduler()
+    # django_job_store = DjangoJobStore()
+    # scheduler.add_jobstore(django_job_store, "default")
+    # print("---")
+    # try :
+    #     django_job_store.remove_all_jobs()
+    # except :
+    #     pass
+    # print("---")
+    # scheduler.add_job(_20221209_1800, 'cron', year=2022, month=12, day=9, hour=18, minute=00, id="test1")
+    # scheduler.add_job(_20221212_0830, 'cron', year=2022, month=12, day=12, hour=8, minute=30, id="test2")
+    # scheduler.add_job(_20221212_1800, 'cron', year=2022, month=12, day=12, hour=18, minute=00, id="test3")
+    # scheduler.add_job(_20221213_0830, 'cron', year=2022, month=12, day=13, hour=8, minute=30, id="test4")
+    # scheduler.add_job(_20221213_1800, 'cron', year=2022, month=12, day=13, hour=18, minute=00, id="test5")
+    # scheduler.add_job(_20221213_2230, 'cron', year=2022, month=12, day=13, hour=22, minute=30, id="test6")
+    # scheduler.add_job(_20221213_2250, 'cron', year=2022, month=12, day=13, hour=22, minute=50, id="test7")
+    # scheduler.start()
+    pass
