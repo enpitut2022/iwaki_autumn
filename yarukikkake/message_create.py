@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from .models import Subject
 
 def create_single_text_message(message):
@@ -15,7 +14,7 @@ def create_single_text_message(message):
         lecture = Subject.objects.get(semester="秋AB", schools="情報学群", code=message)
         try :
             message =  "【題名】:"+lecture.name+"#9をやっつける会\n【対象学類】:" + lecture.colleges + "(他学類も可)\n【日時】:12/12 20時から1時間程度(途中入退出OK)\n好きなところのURLから参加しよう!\n\n【Discord(音声)】https://discord.com/channels/963633143317938176/997416162218483782 \n"
-        except ObjectDoesNotExist :
+        except Subject.DoesNotExist :
             message = "この授業の勉強会の予定はありません"
     test_message = [
                 {
