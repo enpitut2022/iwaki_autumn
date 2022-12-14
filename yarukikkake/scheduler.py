@@ -38,6 +38,10 @@ def _20221213_2255():
 def _20221214_0600():
     line_bot_api = LineBotApi("XtWv3Sv/BEkhMqI9hOFCQCDI2FNEZ7ic14xnPxs7Oe+zhZdfrg6BB8f2iOlWgrEfOL0ecfe5MQp+MG4zAuzhZfn0GzoIXSJdOQ9yUmXZOCdia7AFNN+apGdqulruV5WLcFPMXhh1uLa2jt+MW4rFCQdB04t89/1O/w1cDnyilFU=")
     line_bot_api.broadcast(TextSendMessage("This is a test3"))
+    
+def _20221214_1500():
+    line_bot_api = LineBotApi("XtWv3Sv/BEkhMqI9hOFCQCDI2FNEZ7ic14xnPxs7Oe+zhZdfrg6BB8f2iOlWgrEfOL0ecfe5MQp+MG4zAuzhZfn0GzoIXSJdOQ9yUmXZOCdia7AFNN+apGdqulruV5WLcFPMXhh1uLa2jt+MW4rFCQdB04t89/1O/w1cDnyilFU=")
+    line_bot_api.broadcast(TextSendMessage("This is a test4"))
 
 def start():
     scheduler = BackgroundScheduler()
@@ -57,5 +61,6 @@ def start():
     scheduler.add_job(_20221213_2230, 'cron', year=2022, month=12, day=13, hour=22, minute=30, id="test6")
     scheduler.add_job(_20221213_2255, 'cron', year=2022, month=12, day=13, hour=22, minute=55, id="test7")
     scheduler.add_job(_20221214_0600, 'cron', year=2022, month=12, day=14, hour=6, minute=00, id="test8")
+    scheduler.add_job(_20221214_1500, 'cron', year=2022, month=12, day=14, hour=15, minute=00, id="test9")
     scheduler.start()
     pass
