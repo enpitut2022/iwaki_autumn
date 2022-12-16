@@ -19,4 +19,17 @@ class Subject(models.Model):
     def __str__(self):
         return self.code + " " + self.name
 
+class LineUser(models.Model):
+    user_id = models.CharField('ユーザーID', max_length=100, unique=True)
+    display_name = models.CharField('表示名', max_length=255)
 
+    def __str__(self):
+        return self.display_name
+
+class UserSubject(models.Model):
+    push = models.ForeignKey(LineUser, verbose_name='LINEユーザー', on_delete=models.SET_NULL, blank=True, null=True)
+    subject = models.TextField('科目名')
+    created_at = models.DateTimeField('作成日', default=timezone.now)
+
+    def __str__(self):
+        return f'{self.push} - {self.text[:10]} - {self.is_admin}'

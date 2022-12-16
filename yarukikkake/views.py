@@ -13,8 +13,10 @@ def index(request):
         data = request['events'][0]
         message = data['message']
         reply_token = data['replyToken']
-        line_message = LineMessage(create_single_text_message(message['text']))
+        line_user_id = data['source']['userId']
+        line_message = LineMessage(create_single_text_message(message['text'], line_user_id))
         line_message.reply(reply_token)
+        
         return HttpResponse("ok")
     else:
         return HttpResponse("やるきっかけ LINE Bot")
