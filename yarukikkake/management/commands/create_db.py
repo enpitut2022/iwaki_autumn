@@ -26,11 +26,11 @@ class Command(BaseCommand):
 
         # スレッドを生成する
         for sub in kdb["subject"]:
-            col = [sub[0], sub[1], sub[3], sub[4], sub[5], sub[8], sub[9], sub[13], sub[14], sub[15]]
+            col = [sub[0], sub[1], sub[3], sub[4], sub[5], sub[6], sub[8], sub[9], sub[13], sub[14], sub[15]]
             # cur.excute()でSQL文を実行する
             cur.execute("insert into yarukikkake_subject("
-                        + "code,name,unit,grade,semester,teachers,overview,subtype,schools,colleges"
-                        + ") values (?,?,?,?,?,?,?,?,?,?);", col)
+                        + "code,name,unit,grade,semester,day_of_week,teachers,overview,subtype,schools,colleges"
+                        + ") values (?,?,?,?,?,?,?,?,?,?,?);", col)
 
         print("スレッド生成が完了しました。")
         conn.commit()
