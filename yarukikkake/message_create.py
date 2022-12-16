@@ -5,12 +5,22 @@ def create_single_text_message(message, user_id):
     if message == '予定':
         message = 'やるきっかけの予定が生成されました！\n 題名：レスポンもくもく会\n 11/16 15時よりこちらのURLから参加できます！\n https://discord.com/channels/963633143317938176/987247856991744020'
     elif message == '登録':
-        line_bot_api = LineBotApi("3wF9UeJrvufp/qq2Ddn8wMqs4UDui4dlcZe5wVVSPEwYqHoX4h8lHFiKpLzjCRyhM5V4f5ruVUK8nYmqUCFA2C0hd1ZEJm5oBT2JsnFzyJYvlpOwLlsp6Ki1q8dNIsl26HSymk7Bbox6HSQKc9Bd9wdB04t89/1O/w1cDnyilFU=")
+        line_bot_api = LineBotApi("XtWv3Sv/BEkhMqI9hOFCQCDI2FNEZ7ic14xnPxs7Oe+zhZdfrg6BB8f2iOlWgrEfOL0ecfe5MQp+MG4zAuzhZfn0GzoIXSJdOQ9yUmXZOCdia7AFNN+apGdqulruV5WLcFPMXhh1uLa2jt+MW4rFCQdB04t89/1O/w1cDnyilFU=")
         profile = line_bot_api.get_profile(user_id)
         user_disp_name = profile.display_name
         LineUser.objects.update_or_create(user_id = user_id, display_name=user_disp_name)
         print(LineUser.objects.all())
         message = "ユーザー登録ができました！"
+    elif "登録" in message :
+        list = message.split(" ")
+        line_user = LineUser.objects.filter(user_id = user_id)
+        message = ""
+        for ele in list :
+            if ele == "登録" : continue
+            UserSubject.objects.create(push = line_user.id, subject = ele)
+            message += str(ele)
+        print(UserSubject.objects.all())
+        message += " が登録されました！"
     elif message == '今日の勉強会':
         lectures = Subject.objects.filter(semester="秋AB", schools="情報学群", day_of_week__icontains="金")
         message += 'は\n'
