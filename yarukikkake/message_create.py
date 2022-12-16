@@ -13,7 +13,7 @@ def create_single_text_message(message):
         message = 'やるきっかけの使い方\n\n予定\n今日の勉強会\n科目番号\n\nの3つのコマンドがあります。'
     else:
         try :
-            lecture = Subject.objects.get(semester="秋AB", schools="情報学群", code=message)
+            lecture = Subject.objects.get(semester="秋AB", schools="情報学群", code=message, day_of_week__icontains="金")
             message =  "【題名】:"+lecture.name+"#10をやっつける会\n【対象学類】:" + lecture.colleges + "(他学類も可)\n【日時】:12/12 20時から1時間程度(途中入退出OK)\n好きなところのURLから参加しよう!\n\n【Discord(音声)】https://discord.com/channels/963633143317938176/997416162218483782 \n"
         except Subject.DoesNotExist :
             message = "この授業の勉強会の予定はありません"
