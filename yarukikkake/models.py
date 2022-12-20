@@ -22,14 +22,15 @@ class Subject(models.Model):
 class LineUser(models.Model):
     user_id = models.CharField('ユーザーID', max_length=100, unique=True)
     display_name = models.CharField('表示名', max_length=255)
+    state = models.IntegerField('状態', default=1) # 1 == 新規登録・追加, 2 == 登録解除
 
     def __str__(self):
         return self.display_name
 
 class UserSubject(models.Model):
-    push = models.ForeignKey(LineUser, verbose_name='LINEユーザー', on_delete=models.SET_NULL, blank=True, null=True)
-    subject = models.TextField('科目名')
+    push = models.ForeignKey(LineUser, verbose_name='LINEユーザー', on_delete=models.CASCADE, blank=True, null=True)
+    subject = models.ForeignKey(Subject, verbose_name='対応科目', on_delete=models.CASCADE, blank=True, null=True)
     created_at = models.DateTimeField('作成日', default=timezone.now)
 
     def __str__(self):
-        return f'{self.push} - {self.text[:10]} - {self.is_admin}'
+        return self.push.display_name + " " + self.subject.name
