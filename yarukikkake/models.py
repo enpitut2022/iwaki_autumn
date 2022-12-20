@@ -9,7 +9,7 @@ class Subject(models.Model):
     unit = models.CharField(verbose_name="単位数",blank=False, null=False, default="", max_length=10)
     grade = models.CharField(verbose_name="履修年次",blank=False, null=False, default="", max_length=30)
     semester = models.CharField(verbose_name="学期",blank=False, null=False, default="", max_length=30)
-    day_of_week = models.CharField(verbose_name="曜日",blank=False, null=False, default="", max_length=20)
+    day_of_week = models.CharField(verbose_name="曜日",blank=False, null=False, default="", max_length=100)
     teachers =  models.TextField(verbose_name='教員名', blank=True, max_length=100, default="")
     overview = models.TextField(verbose_name='概要', blank=True, max_length=200, default="")
     subtype =  models.TextField(verbose_name='種類', blank=True, max_length=32, default="")
