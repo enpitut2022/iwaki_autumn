@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # デプロイ先のに接続する
-        conn = psycopg2.connect("postgres://yarukikkake:Vz23VmREg2PbRxSWctihmS1ZUXD2BtNC@dpg-ce2q46pa6gdpj355hafg-a/yarukikkake_db")
+        conn = psycopg2.connect("postgres://yarukikkake:B9bK7KuP3NKY4JoIPUOEtrPD6hcXm6j2@dpg-cegmg2h4rebariapuf00-a/yarukikkake_db_ils9")
         cur = conn.cursor()
 
         # kdb.josnを開く
