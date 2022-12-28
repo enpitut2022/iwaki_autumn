@@ -22,8 +22,8 @@ class Subject(models.Model):
 class LineUser(models.Model):
     user_id = models.CharField('ユーザーID', max_length=100, unique=True)
     display_name = models.CharField('表示名', max_length=255)
-    state = models.IntegerField('状態', default=1) # 1 == 新規登録・追加, 2 == 登録解除
-
+    state = models.IntegerField('状態', default=1) # 1 == ユーザー名登録・追加, 2 == タスク名登録, 3 == タスク開始時刻登録, 4 == タスク開始報告
+    latast_task_id = models.UUIDField('タスクID', default=uuid.uuid4, editable=True, unique=False, null=True)
     def __str__(self):
         return self.display_name
 
@@ -34,3 +34,17 @@ class UserSubject(models.Model):
 
     def __str__(self):
         return self.push.display_name + " " + self.subject.name
+    
+class Task(models.Model):
+    STATE = (
+        (1, '始めてない'),
+        (2, '始めた'),
+    )
+    task_id = models.UUIDField('タスクID', default=uuid.uuid4, editable=False, unique=True)
+    task_name = models.CharField(verbose_name='タスク名', blank=False, null=False, max_length=30)
+    task_user = models.ForeignKey(LineUser, verbose_name='LINEユーザー', on_delete=models.CASCADE, blank=True, null=True)
+    task_start_time = models.DateTimeField("タスク開始時刻", null=True)
+    task_status = models.IntegerField('状態', choices=STATE,default=1) # 1 == 始めてない, 2 == 始めた
+
+    def __str__(self):
+        return self.task_name + " " + str(self.task_start_time) + " " + str(self.task_status)
