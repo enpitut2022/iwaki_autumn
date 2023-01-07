@@ -14,15 +14,15 @@ def index(request):
         
         reply_token = data['replyToken']
         event_type = data['type']
-        if event_type == 'message':
-            message = data['message']
+        if event_type == 'message' or event_type == 'postback':
+            message = data['message']['text'] if event_type == 'message' else data['postback']['data']
             line_user_id = data['source']['userId']
             try:
                 line_group_id = data['source']['groupId']
             except Exception as e:
                 line_group_id = None
                 # print(e)
-            line_message = LineMessage(create_single_text_message(message['text'], line_user_id, line_group_id))
+            line_message = LineMessage(create_single_text_message(message, line_user_id, line_group_id))
             line_message.reply(reply_token)
         elif event_type == 'join':
             try:

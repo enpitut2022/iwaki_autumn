@@ -1,6 +1,6 @@
 from .models import Subject, LineUser, UserSubject, Task, LineGroup
 from linebot import LineBotApi
-from linebot.models import FlexSendMessage
+from linebot.models import FlexSendMessage, TextSendMessage
 import datetime
 import json
 
@@ -68,8 +68,12 @@ def create_single_text_message(message, user_id, group_id):
             else:
                 message = "登録されたタスクは全て開始できています！" 
         elif message == "タスク未開始ユーザー確認":
-            message = create_message_without_groups()
-            pass
+            broadcast_message = create_message_without_groups()
+            if not broadcast_message :
+                message = "みんなタスクが終わっているみたい！すごいぞ！"
+            else :
+                line_bot_api.broadcast(TextSendMessage(create_message_without_groups()))
+                message = "みんなにも未開始ユーザーがいることが知らされました！"
         else:
             line_user = LineUser.objects.get(user_id=user_id)
             print("公式LINE", line_user)
@@ -100,11 +104,19 @@ def create_single_text_message(message, user_id, group_id):
                 task.task_status = 2
                 task.save()
                 message = task.task_name + "を開始できました！おめでとうございます！" 
+                line_user.state = 1
+                line_user.save()
             elif line_user.state == 5:
                 task = Task.objects.get(task_id = message)
-                message = task.task_name + "は、" + str(task.task_start_time.day) + "日の" + str(task.task_start_time.hour + 9) + "時に開始される予定です！" 
+                try:
+                    time = task.task_start_time + datetime.timedelta(hours=9)
+                    message = task.task_name + "は、" + str(time.day) + "日の" + str(time.hour) + "時に開始される予定です！" 
+                except Exception as e :
+                    message = task.task_name + "は、開始時刻がうまく登録されていないようです！"
+                line_user.state = 1
+                line_user.save()
             else:
-                message = "想定されていないコマンドです！"
+                message = False
     else :
         if message == "やるきっかけ" :
             message_json = '''{
@@ -179,7 +191,7 @@ def create_single_text_message(message, user_id, group_id):
             line_user = LineUser.objects.get(user_id = user_id)
             line_user.state = 5
             line_user.save()
-            message_json = create_json_by_user_id(user_id)
+            message_json = create_json_by_user_id_and_group_id(user_id, group_id)
             if message_json :
                 flex_message_json_dict = json.loads(message_json)
                 line_bot_api.push_message(group_id, FlexSendMessage(
@@ -188,10 +200,11 @@ def create_single_text_message(message, user_id, group_id):
                 ))
                 message = "時間を確認したいタスクを選択してください！"
             else:
-                message = "登録されたタスクは全て開始できています！" 
+                message = line_user.display_name + "さんの、登録されたタスクは全て開始できています！" 
         elif message == "タスク未開始ユーザー確認":
             message = create_message_by_group_id(group_id)
-            pass
+            if not message :
+                message = "このグループはみんなタスクが終わっているみたい！すごいぞ！"
         else:
             line_user = LineUser.objects.get(user_id=user_id)
             print("グループ", line_user, "state=", line_user.state)
@@ -223,12 +236,21 @@ def create_single_text_message(message, user_id, group_id):
                 task.task_status = 2
                 task.save()
                 message = task.task_name + "を開始できました！おめでとうございます！" 
+                line_user.state = 1
+                line_user.save()
             elif line_user.state == 5:
                 task = Task.objects.get(task_id = message)
-                message = task.task_name + "は、" + str(task.task_start_time.day) + "日の" + str(task.task_start_time.hour + 9) + "時に開始される予定です！" 
+                try:
+                    time = task.task_start_time + datetime.timedelta(hours=9)
+                    message = line_user.display_name + "さんのタスク「"
+                    message += task.task_name + "」は、" + str(time.day) + "日の" + str(time.hour) + "時に開始される予定です！" 
+                except Exception as e :
+                    message = task.task_name + "は、開始時刻がうまく登録されていないようです！"
+                line_user.state = 1
+                line_user.save()
             else:
-                message = "想定されていないコマンドです！"
-            
+                message = False
+    if not message : exit(0)
     text_message = [
             {
                 'type': 'text',
@@ -254,18 +276,18 @@ def create_json_by_user_id(user_id):
                     {
                         "type": "button",
                         "action": {
-                            "type": "message",
+                            "type": "postback",
                             "label": "''' + task.task_name + '''",
-                            "text": "'''+ str(task.task_id) +'''"
+                            "data": "'''+ str(task.task_id) +'''"
                         }
                     }, '''
     json_message += '''
                     {
                         "type": "button",
                         "action": {
-                            "type": "message",
+                            "type": "postback",
                             "label": "''' + tasks[l-1].task_name + '''",
-                            "text": "'''+ str(tasks[l-1].task_id) +'''"
+                            "data": "'''+ str(tasks[l-1].task_id) +'''"
                         }
                     } '''
     json_message += '''
@@ -292,18 +314,18 @@ def create_json_by_user_id_and_group_id(user_id, group_id):
                     {
                         "type": "button",
                         "action": {
-                            "type": "message",
+                            "type": "postback",
                             "label": "''' + task.task_name + '''",
-                            "text": "'''+ str(task.task_id) +'''"
+                            "data": "'''+ str(task.task_id) +'''"
                         }
                     }, '''
     json_message += '''
                     {
                         "type": "button",
                         "action": {
-                            "type": "message",
+                            "type": "postback",
                             "label": "''' + tasks[l-1].task_name + '''",
-                            "text": "'''+ str(tasks[l-1].task_id) +'''"
+                            "data": "'''+ str(tasks[l-1].task_id) +'''"
                         }
                     } '''
     json_message += '''
@@ -318,9 +340,10 @@ def create_message_without_groups():
     message = "以下が残っているようです！"
     for task in tasks :
         message += "\n・"
-        message += task.task_user.display_name
+        message += task.task_user.display_name + "さん"
         try :
-            message += "は、まだ" + str(task.task_start_time.day) + "日" + str(task.task_start_time.hour + 9) + "時に開始予定の「"
+            time = task.task_start_time + datetime.timedelta(hours=9)
+            message += "は、まだ" + str(time.day) + "日" + str(time.hour) + "時に開始予定の「"
         except Exception as e:
             print(e)
             message += "は、まだ時間未登録の「"
@@ -335,9 +358,10 @@ def create_message_by_group_id(group_id):
     message = "以下が残っているようです！"
     for task in tasks :
         message += "\n・"
-        message += task.task_user.display_name
+        message += task.task_user.display_name + "さん"
         try :
-            message += "は、まだ" + str(task.task_start_time.day) + "日" + str(task.task_start_time.hour + 9) + "時に開始予定の「"
+            time = task.task_start_time + datetime.timedelta(hours=9)
+            message += "は、まだ" + str(time.day) + "日" + str(time.hour) + "時に開始予定の「"
         except Exception as e:
             print(e)
             message += "は、まだ時間未登録の「"
@@ -346,37 +370,272 @@ def create_message_by_group_id(group_id):
     return message
 
 def create_time_json():
+    # json_message = '''{
+    #     "type": "bubble",
+    #     "body": {
+    #         "type": "box",
+    #         "layout": "vertical",
+    #         "contents": [
+    # '''
+    # for hh in range(0, 23, 1) :
+    #     json_message += '''
+    #                 {
+    #                     "type": "button",
+    #                     "action": {
+    #                         "type": "message",
+    #                         "label": "''' + "明日" + str(hh) + "時から" + '''",
+    #                         "text": "'''+ str(hh) +'''"
+    #                     }
+    #                 }, '''
+    # hh += 1
+    # json_message += '''
+    #                 {
+    #                     "type": "button",
+    #                     "action": {
+    #                         "type": "message",
+    #                         "label": "''' + "明日" + str(hh) + "時から" + '''",
+    #                         "text": "'''+  str(hh) +'''"
+    #                     }
+    #                 } '''
+    # json_message += '''
+    #         ]
+    #     }
+    # }'''
     json_message = '''{
-        "type": "bubble",
-        "body": {
-            "type": "box",
-            "layout": "vertical",
-            "contents": [
-    '''
-    for hh in range(0, 23, 1) :
-        json_message += '''
+        "type": "carousel",
+        "contents": [
+            {
+            "type": "bubble",
+            "header": {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                {
+                    "type": "text",
+                    "text": "明日の何時から？",
+                    "align": "center"
+                }
+                ]
+            },
+            "body": {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
                     {
                         "type": "button",
                         "action": {
-                            "type": "message",
-                            "label": "''' + "明日" + str(hh) + "時から" + '''",
-                            "text": "'''+ str(hh) +'''"
+                        "type": "message",
+                        "label": "0時",
+                        "text": "0"
                         }
-                    }, '''
-    hh += 1
-    json_message += '''
+                    },
                     {
                         "type": "button",
                         "action": {
-                            "type": "message",
-                            "label": "''' + "明日" + str(hh) + "時から" + '''",
-                            "text": "'''+  str(hh) +'''"
+                        "type": "message",
+                        "label": "1時",
+                        "text": "1"
                         }
-                    } '''
-    json_message += '''
-            ]
-        }
-    }'''
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "2時",
+                        "text": "2"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "3時",
+                        "text": "3"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "4時",
+                        "text": "4"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "5時",
+                        "text": "5"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "6時",
+                        "text": "6"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "7時",
+                        "text": "7"
+                        }
+                    }
+                    ]
+                },
+                {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "8時",
+                        "text": "8"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "9時",
+                        "text": "9"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "10時",
+                        "text": "10"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "11時",
+                        "text": "11"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "12時",
+                        "text": "12"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "13時",
+                        "text": "13"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "14時",
+                        "text": "14"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "15時",
+                        "text": "15"
+                        }
+                    }
+                    ]
+                },
+                {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "16時",
+                        "text": "16"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "17時",
+                        "text": "17"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "18時",
+                        "text": "18"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "19時",
+                        "text": "19"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "20時",
+                        "text": "20"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "21時",
+                        "text": "21"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "22時",
+                        "text": "22"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "action": {
+                        "type": "message",
+                        "label": "23時",
+                        "text": "23"
+                        }
+                    }
+                    ]
+                }
+                ]
+            }
+            }
+        ]
+        }'''
     return json_message
 
 def create_join_message():
