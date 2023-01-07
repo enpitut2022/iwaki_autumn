@@ -21,7 +21,7 @@ def index(request):
                 line_group_id = data['source']['groupId']
             except Exception as e:
                 line_group_id = None
-                print(e)
+                # print(e)
             line_message = LineMessage(create_single_text_message(message['text'], line_user_id, line_group_id))
             line_message.reply(reply_token)
         elif event_type == 'join':
@@ -29,6 +29,7 @@ def index(request):
                 line_group_id = data['source']['groupId']
             except Exception as e:
                 line_group_id = None
+                # print(e)
             line_message = LineMessage(create_join_message())
             line_message.reply(reply_token)
 
