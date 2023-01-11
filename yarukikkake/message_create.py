@@ -14,12 +14,12 @@ def broad_cast(message, line_user_clicked:LineUser):
     line_users = LineUser.objects.all()
     tokyo_tz = datetime.timezone(datetime.timedelta(hours=9))
     for line_user in line_users :
-        days_broadcast = DayBroadcast.objects.filter(line_user = line_user, day_broadcast__gte = datetime.datetime.now(tz=tokyo_tz).replace(hour=0, minute=0, second=0, tzinfo=tokyo_tz) - datetime.timedelta(days = 1))
-        print(days_broadcast)
+        days_broadcast = DayBroadcast.objects.filter(line_user=line_user, day_broadcast__gte = datetime.datetime.now(tz=tokyo_tz).replace(hour=0, minute=0, second=0, tzinfo=tokyo_tz) - datetime.timedelta(days = 1))
+        # print(days_broadcast)
         if len(days_broadcast) >= 3 and line_user.user_id != line_user_clicked.user_id: continue # 自分が押していないときは、日に3回しか送られてこない
         line_bot_api = LineBotApi("3wF9UeJrvufp/qq2Ddn8wMqs4UDui4dlcZe5wVVSPEwYqHoX4h8lHFiKpLzjCRyhM5V4f5ruVUK8nYmqUCFA2C0hd1ZEJm5oBT2JsnFzyJYvlpOwLlsp6Ki1q8dNIsl26HSymk7Bbox6HSQKc9Bd9wdB04t89/1O/w1cDnyilFU=")
         line_bot_api.push_message(line_user.user_id, TextSendMessage(message))
-        DayBroadcast.objects.create(line_user = line_user, day_broadcast = datetime.datetime.now(tz=tokyo_tz))
+        DayBroadcast.objects.create(line_user=line_user, day_broadcast = datetime.datetime.now(tz=tokyo_tz))
 
 def create_line_user(user_id):
     line_bot_api = LineBotApi("3wF9UeJrvufp/qq2Ddn8wMqs4UDui4dlcZe5wVVSPEwYqHoX4h8lHFiKpLzjCRyhM5V4f5ruVUK8nYmqUCFA2C0hd1ZEJm5oBT2JsnFzyJYvlpOwLlsp6Ki1q8dNIsl26HSymk7Bbox6HSQKc9Bd9wdB04t89/1O/w1cDnyilFU=")
@@ -84,6 +84,7 @@ def create_single_text_message(message, user_id, group_id):
                 if not broadcast_message :
                     message = "みんなタスクが終わっているみたい！すごいぞ！"
                 else :
+                    line_user = LineUser.objects.get(user_id = user_id)
                     broad_cast(create_message_without_groups(), line_user)
                     # line_bot_api.broadcast(TextSendMessage(create_message_without_groups()))
                     message = "みんなにも未開始ユーザーがいることが知らされました！"
@@ -260,6 +261,7 @@ def create_single_text_message(message, user_id, group_id):
         print(e)
         message = ""
         try:
+            line_user = LineUser.objects.get(user_id=user_id)
             line_user.state = 1
             line_user.save()
         except Exception as e:
