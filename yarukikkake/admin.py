@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Subject, LineUser, UserSubject, Task
+from .models import Subject, LineUser, UserSubject, Task, DayBroadcast
 
 # Register your models here.
 
@@ -14,3 +14,4 @@ admin.site.register(Subject, SubjectAdmin)
 admin.site.register(LineUser)
 admin.site.register(UserSubject)
 admin.site.register(Task, TaskAdmin)
+admin.site.register(DayBroadcast)

@@ -27,6 +27,12 @@ class LineUser(models.Model):
     def __str__(self):
         return self.display_name
 
+class DayBroadcast(models.Model):
+    line_user = models.ForeignKey(LineUser, verbose_name='LINEユーザー', on_delete=models.CASCADE, blank=True, null=True)
+    day_broadcast = models.DateTimeField('ブロードキャスト時間', blank=True, null=True) # その日に何回送られたかをチェックする用
+    def __str__(self) -> str:
+        return self.line_user.display_name + str(self.day_broadcast)
+    
 class UserSubject(models.Model):
     push = models.ForeignKey(LineUser, verbose_name='LINEユーザー', on_delete=models.CASCADE, blank=True, null=True)
     subject = models.ForeignKey(Subject, verbose_name='対応科目', on_delete=models.CASCADE, blank=True, null=True)
