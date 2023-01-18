@@ -648,6 +648,17 @@ def create_time_json():
                 }
                 ]
             }
+            },
+            "footer": {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                {
+                    "type": "text",
+                    "text": "明日の何時から？",
+                    "align": "center"
+                }
+                ]
             }
         ]
         }'''
