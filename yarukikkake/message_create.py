@@ -17,12 +17,12 @@ def broad_cast(message, line_user_clicked:LineUser):
         days_broadcast = DayBroadcast.objects.filter(line_user=line_user, day_broadcast__gte = datetime.datetime.now(tz=tokyo_tz).replace(hour=0, minute=0, second=0, tzinfo=tokyo_tz) - datetime.timedelta(days = 1))
         # print(days_broadcast)
         if len(days_broadcast) >= 3 and line_user.user_id != line_user_clicked.user_id: continue # 自分が押していないときは、日に3回しか送られてこない
-        line_bot_api = LineBotApi("3wF9UeJrvufp/qq2Ddn8wMqs4UDui4dlcZe5wVVSPEwYqHoX4h8lHFiKpLzjCRyhM5V4f5ruVUK8nYmqUCFA2C0hd1ZEJm5oBT2JsnFzyJYvlpOwLlsp6Ki1q8dNIsl26HSymk7Bbox6HSQKc9Bd9wdB04t89/1O/w1cDnyilFU=")
+        line_bot_api = LineBotApi("y2KJiMyZrERM8PPdkGEjIr1UI9Il0Ete8TGGbz09bR0czv0U+OObpsaVf3a6hCPlDQwcf0Sps6sqR0xoPWZA1yKRyUVaYl4ghYZOLCPEQ+9bFk8/leAHbOHkKqvqhkX4i8KZlwNykfqtSyxgKJnqkAdB04t89/1O/w1cDnyilFU=")
         line_bot_api.push_message(line_user.user_id, TextSendMessage(message))
         DayBroadcast.objects.create(line_user=line_user, day_broadcast = datetime.datetime.now(tz=tokyo_tz))
 
 def create_line_user(user_id):
-    line_bot_api = LineBotApi("3wF9UeJrvufp/qq2Ddn8wMqs4UDui4dlcZe5wVVSPEwYqHoX4h8lHFiKpLzjCRyhM5V4f5ruVUK8nYmqUCFA2C0hd1ZEJm5oBT2JsnFzyJYvlpOwLlsp6Ki1q8dNIsl26HSymk7Bbox6HSQKc9Bd9wdB04t89/1O/w1cDnyilFU=")
+    line_bot_api = LineBotApi("y2KJiMyZrERM8PPdkGEjIr1UI9Il0Ete8TGGbz09bR0czv0U+OObpsaVf3a6hCPlDQwcf0Sps6sqR0xoPWZA1yKRyUVaYl4ghYZOLCPEQ+9bFk8/leAHbOHkKqvqhkX4i8KZlwNykfqtSyxgKJnqkAdB04t89/1O/w1cDnyilFU=")
     profile = line_bot_api.get_profile(user_id)
     user_disp_name = profile.display_name
     if LineUser.objects.filter(user_id = user_id).exists() :
@@ -42,7 +42,7 @@ def create_single_text_message(message, user_id, group_id):
     if group_id != None :
         create_line_group(group_id)
     try:
-        line_bot_api = LineBotApi("3wF9UeJrvufp/qq2Ddn8wMqs4UDui4dlcZe5wVVSPEwYqHoX4h8lHFiKpLzjCRyhM5V4f5ruVUK8nYmqUCFA2C0hd1ZEJm5oBT2JsnFzyJYvlpOwLlsp6Ki1q8dNIsl26HSymk7Bbox6HSQKc9Bd9wdB04t89/1O/w1cDnyilFU=")
+        line_bot_api = LineBotApi("y2KJiMyZrERM8PPdkGEjIr1UI9Il0Ete8TGGbz09bR0czv0U+OObpsaVf3a6hCPlDQwcf0Sps6sqR0xoPWZA1yKRyUVaYl4ghYZOLCPEQ+9bFk8/leAHbOHkKqvqhkX4i8KZlwNykfqtSyxgKJnqkAdB04t89/1O/w1cDnyilFU=")
         if group_id == None:
             if message == "タスク登録・変更" :
                 line_user = LineUser.objects.get(user_id = user_id)
@@ -50,7 +50,7 @@ def create_single_text_message(message, user_id, group_id):
                 line_user.save()
                 message = "登録したいタスク名を入力してください"
             elif message == "タスク開始報告" :
-                line_bot_api = LineBotApi("3wF9UeJrvufp/qq2Ddn8wMqs4UDui4dlcZe5wVVSPEwYqHoX4h8lHFiKpLzjCRyhM5V4f5ruVUK8nYmqUCFA2C0hd1ZEJm5oBT2JsnFzyJYvlpOwLlsp6Ki1q8dNIsl26HSymk7Bbox6HSQKc9Bd9wdB04t89/1O/w1cDnyilFU=")
+                line_bot_api = LineBotApi("y2KJiMyZrERM8PPdkGEjIr1UI9Il0Ete8TGGbz09bR0czv0U+OObpsaVf3a6hCPlDQwcf0Sps6sqR0xoPWZA1yKRyUVaYl4ghYZOLCPEQ+9bFk8/leAHbOHkKqvqhkX4i8KZlwNykfqtSyxgKJnqkAdB04t89/1O/w1cDnyilFU=")
                 line_user = LineUser.objects.get(user_id = user_id)
                 line_user.state = 4
                 line_user.save()
@@ -65,7 +65,7 @@ def create_single_text_message(message, user_id, group_id):
                 else:
                     message = "登録されたタスクは全て開始できています！" 
             elif message == "タスク確認":
-                line_bot_api = LineBotApi("3wF9UeJrvufp/qq2Ddn8wMqs4UDui4dlcZe5wVVSPEwYqHoX4h8lHFiKpLzjCRyhM5V4f5ruVUK8nYmqUCFA2C0hd1ZEJm5oBT2JsnFzyJYvlpOwLlsp6Ki1q8dNIsl26HSymk7Bbox6HSQKc9Bd9wdB04t89/1O/w1cDnyilFU=")
+                line_bot_api = LineBotApi("y2KJiMyZrERM8PPdkGEjIr1UI9Il0Ete8TGGbz09bR0czv0U+OObpsaVf3a6hCPlDQwcf0Sps6sqR0xoPWZA1yKRyUVaYl4ghYZOLCPEQ+9bFk8/leAHbOHkKqvqhkX4i8KZlwNykfqtSyxgKJnqkAdB04t89/1O/w1cDnyilFU=")
                 line_user = LineUser.objects.get(user_id = user_id)
                 line_user.state = 5
                 line_user.save()
@@ -91,7 +91,7 @@ def create_single_text_message(message, user_id, group_id):
             else:
                 line_user = LineUser.objects.get(user_id=user_id)
                 print("公式LINE", line_user)
-                line_bot_api = LineBotApi("3wF9UeJrvufp/qq2Ddn8wMqs4UDui4dlcZe5wVVSPEwYqHoX4h8lHFiKpLzjCRyhM5V4f5ruVUK8nYmqUCFA2C0hd1ZEJm5oBT2JsnFzyJYvlpOwLlsp6Ki1q8dNIsl26HSymk7Bbox6HSQKc9Bd9wdB04t89/1O/w1cDnyilFU=")
+                line_bot_api = LineBotApi("y2KJiMyZrERM8PPdkGEjIr1UI9Il0Ete8TGGbz09bR0czv0U+OObpsaVf3a6hCPlDQwcf0Sps6sqR0xoPWZA1yKRyUVaYl4ghYZOLCPEQ+9bFk8/leAHbOHkKqvqhkX4i8KZlwNykfqtSyxgKJnqkAdB04t89/1O/w1cDnyilFU=")
                 if line_user.state == 2:
                     task = Task.objects.create(task_name=message, task_user=line_user, task_status=1)
                     line_user.state = 3
@@ -182,7 +182,7 @@ def create_single_text_message(message, user_id, group_id):
                 line_user.save()
                 message = "登録したいタスク名を入力してください"
             elif message == "タスク開始報告" :
-                line_bot_api = LineBotApi("3wF9UeJrvufp/qq2Ddn8wMqs4UDui4dlcZe5wVVSPEwYqHoX4h8lHFiKpLzjCRyhM5V4f5ruVUK8nYmqUCFA2C0hd1ZEJm5oBT2JsnFzyJYvlpOwLlsp6Ki1q8dNIsl26HSymk7Bbox6HSQKc9Bd9wdB04t89/1O/w1cDnyilFU=")
+                line_bot_api = LineBotApi("y2KJiMyZrERM8PPdkGEjIr1UI9Il0Ete8TGGbz09bR0czv0U+OObpsaVf3a6hCPlDQwcf0Sps6sqR0xoPWZA1yKRyUVaYl4ghYZOLCPEQ+9bFk8/leAHbOHkKqvqhkX4i8KZlwNykfqtSyxgKJnqkAdB04t89/1O/w1cDnyilFU=")
                 line_user = LineUser.objects.get(user_id = user_id)
                 line_user.state = 4
                 line_user.save()
@@ -197,7 +197,7 @@ def create_single_text_message(message, user_id, group_id):
                 else:
                     message = "登録されたタスクは全て開始できています！" 
             elif message == "タスク確認":
-                line_bot_api = LineBotApi("3wF9UeJrvufp/qq2Ddn8wMqs4UDui4dlcZe5wVVSPEwYqHoX4h8lHFiKpLzjCRyhM5V4f5ruVUK8nYmqUCFA2C0hd1ZEJm5oBT2JsnFzyJYvlpOwLlsp6Ki1q8dNIsl26HSymk7Bbox6HSQKc9Bd9wdB04t89/1O/w1cDnyilFU=")
+                line_bot_api = LineBotApi("y2KJiMyZrERM8PPdkGEjIr1UI9Il0Ete8TGGbz09bR0czv0U+OObpsaVf3a6hCPlDQwcf0Sps6sqR0xoPWZA1yKRyUVaYl4ghYZOLCPEQ+9bFk8/leAHbOHkKqvqhkX4i8KZlwNykfqtSyxgKJnqkAdB04t89/1O/w1cDnyilFU=")
                 line_user = LineUser.objects.get(user_id = user_id)
                 line_user.state = 5
                 line_user.save()
@@ -219,7 +219,7 @@ def create_single_text_message(message, user_id, group_id):
                 line_user = LineUser.objects.get(user_id=user_id)
                 print("グループ", line_user, "state=", line_user.state)
                 line_group = LineGroup.objects.get(group_id=group_id)
-                line_bot_api = LineBotApi("3wF9UeJrvufp/qq2Ddn8wMqs4UDui4dlcZe5wVVSPEwYqHoX4h8lHFiKpLzjCRyhM5V4f5ruVUK8nYmqUCFA2C0hd1ZEJm5oBT2JsnFzyJYvlpOwLlsp6Ki1q8dNIsl26HSymk7Bbox6HSQKc9Bd9wdB04t89/1O/w1cDnyilFU=")
+                line_bot_api = LineBotApi("y2KJiMyZrERM8PPdkGEjIr1UI9Il0Ete8TGGbz09bR0czv0U+OObpsaVf3a6hCPlDQwcf0Sps6sqR0xoPWZA1yKRyUVaYl4ghYZOLCPEQ+9bFk8/leAHbOHkKqvqhkX4i8KZlwNykfqtSyxgKJnqkAdB04t89/1O/w1cDnyilFU=")
                 if line_user.state == 2:
                     task = Task.objects.create(task_name=message, task_user=line_user, task_group=line_group, task_status=1)
                     line_user.state = 3
